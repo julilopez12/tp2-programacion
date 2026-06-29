@@ -1,45 +1,85 @@
-#   TA - TE - TI  con  Algoritmo de la Burbuja (Bubble Sort)
-
-# El Bubble Sort se usa para ordenar el ranking de jugadores
-# de mayor a menor cantidad de victorias al mostrar el marcador.
-
-# BUBBLE SORT
+# -------
+# TA TE TI con Algoritmo de la Burbuja (Bubble Sort)
+# -------
 
 def bubble_sort_optimizado(lista):
-    """
-    Ordena una lista de diccionarios de mayor a menor
-    según la clave 'victorias'.
-
-    Complejidad:
-      - Mejor caso  : O(n)   — lista ya ordenada
-      - Caso promedio: O(n²)
-      - Peor caso   : O(n²)  — lista completamente desordenada
-    """
     n = len(lista)
     for i in range(n):
         intercambio = False
         for j in range(n - i - 1):
-            if lista[j]["victorias"] < lista[j + 1]["victorias"]:   # Mayor A Menor
+            if lista[j]["victorias"] < lista[j + 1]["victorias"]:
                 lista[j], lista[j + 1] = lista[j + 1], lista[j]
                 intercambio = True
-        if not intercambio:   # Condición de parada: si no hubo cambios, ya está ordenado
+        if not intercambio:
             break
 
+# -------
+# Interfas 
+# -------
 
-# Datos De Los Jugadores
+def mostrar_menu():
+    print("\n" + "_" * 40)
+    print("       TA - TE - TI  (Bubble Sort)")
+    print("_" * 40)
+    print("1 - Jugar")
+    print("2 - Reglas del Juego")
+    print("3 - Ranking")
+    print("0 - Salir")
+    print("_" * 40)
 
-jugador1 = input("Nombre del jugador 1 (X): ")
-jugador2 = input("Nombre del jugador 2 (O): ")
+# -------
+# Reglas del Juego
+# -------
 
-victorias1 = 0
-victorias2 = 0
-empates    = 0
+def mostrar_reglas():
+    print("\n" + "_" * 40)
+    print("         REGLAS DEL JUEGO")
+    print("_" * 40)
+    print("- Dos jugadores se turnan para marcar")
+    print("  casillas en un tablero de 3x3.")
+    print("- El jugador 1 usa la X.")
+    print("- El jugador 2 usa la O.")
+    print("- Gana quien complete una fila,")
+    print("  columna o diagonal.")
+    print("- Si se llenan las 9 casillas sin")
+    print("  ganador, es EMPATE.")
+    print("- El ranking se ordena con Bubble Sort")
+    print("  de mayor a menor victorias.")
+    print("_" * 40)
 
-# Tablaro TA TE TI
+# -------
+# Ranking de los Jugadores
+# -------
 
-while True:
+def mostrar_ranking(jugadores_historial):
+    print("\n" + "_" * 40)
+    print("            RANKING")
+    print("_" * 40)
+    if not jugadores_historial:
+        print("  Todavía no hay partidas jugadas.")
+    else:
+        for pos, j in enumerate(jugadores_historial, start=1):
+            print(f"  #{pos}  {j['nombre']} ({j['simbolo']})  —  Victorias: {j['victorias']}")
+    print("_" * 40)
 
-    # Tablero Ta-Te-Ti
+# -------
+# Juego
+# -------
+
+def jugar(victorias1, victorias2, empates, jugador1, jugador2):
+
+    # -------
+    # Datos de los Jugadores
+    # -------
+
+    if jugador1 == "" and jugador2 == "":
+        jugador1 = input("\nNombre del jugador 1 (X): ")
+        jugador2 = input("Nombre del jugador 2 (O): ")
+    
+    # -------
+    # Creacion del Tablero
+    # -------
+
     tablero = [
         [" ", " ", " "],
         [" ", " ", " "],
@@ -52,36 +92,31 @@ while True:
             print(fila[0], "|", fila[1], "|", fila[2])
             print("-" * 9)
         print()
-        
-    # Formas De Ganar
+    
+    # -------
+    # Formas de Ganar
+    # -------
 
     def ganador(simbolo):
-
-        # Filas
-        
         for fila in tablero:
             if fila[0] == fila[1] == fila[2] == simbolo:
                 return True
-        
-        # Columnas
-
         for i in range(3):
             if tablero[0][i] == tablero[1][i] == tablero[2][i] == simbolo:
                 return True
-        
-        # Diagonales
-
         if tablero[0][0] == tablero[1][1] == tablero[2][2] == simbolo:
             return True
         if tablero[0][2] == tablero[1][1] == tablero[2][0] == simbolo:
             return True
         return False
+    
+    # -------
+    # Turnos, Filas y Columnas
+    # -------
 
-    # Juego
-
-    turno  = "X"
+    turno   = "X"
     jugadas = 0
-
+    
     while True:
 
         mostrar()
@@ -127,11 +162,6 @@ while True:
 
         turno = "O" if turno == "X" else "X"
 
-    # MARCADOR CON BUBBLE SORT
-
-    # Armamos una lista de jugadores y la ordenamos de mayor a menor victorias
-    # usando el Algoritmo de la Burbuja antes de mostrar el ranking.
-
     jugadores = [
         {"nombre": jugador1, "victorias": victorias1, "simbolo": "X"},
         {"nombre": jugador2, "victorias": victorias2, "simbolo": "O"},
@@ -146,14 +176,67 @@ while True:
     print(f"  Empates: {empates}")
     print("==============================")
 
-    # ¿Otra Partida?
+    return victorias1, victorias2, empates, jugador1, jugador2
 
-    while True:
-        jugar = input("\n¿Desean jugar otra partida? (S/N): ")
-        if jugar.upper() == "S":
-            break
-        elif jugar.upper() == "N":
-            print("\nGracias por jugar.")
-            exit()
-        else:
-            print("Opción no válida. Debe ingresar S o N.")
+    # -------
+    # Codigo Principal 
+    # -------
+
+victorias1 = 0
+victorias2 = 0
+empates    = 0
+jugador1   = ""
+jugador2   = ""
+
+while True:
+
+    mostrar_menu()
+
+    opcion = input("\nSeleccione una opción: ")
+
+    if opcion == "1":
+
+        victorias1, victorias2, empates, jugador1, jugador2 = jugar(victorias1, victorias2, empates, jugador1, jugador2)
+
+    elif opcion == "2":
+
+        mostrar_reglas()
+
+    elif opcion == "3":
+
+        jugadores_ranking = [
+            {"nombre": jugador1, "victorias": victorias1, "simbolo": "X"},
+            {"nombre": jugador2, "victorias": victorias2, "simbolo": "O"},
+        ]
+        bubble_sort_optimizado(jugadores_ranking)
+        mostrar_ranking(jugadores_ranking)
+
+    elif opcion == "0":
+
+        print("\nGracias por jugar Ta-Te-Ti. ¡Hasta la próxima!")
+        break
+
+    else:
+
+        print("\nOpción incorrecta. Intente nuevamente.")
+       
+
+
+       
+           
+
+   
+               
+       
+           
+
+    
+    
+
+   
+    
+    
+  
+
+    
+          
